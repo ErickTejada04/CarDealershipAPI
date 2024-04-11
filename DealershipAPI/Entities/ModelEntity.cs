@@ -1,14 +1,17 @@
-﻿namespace DealershipAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DealershipAPI.Entities
 {
     public class ModelEntity
     {
-        public Guid ModelID { get; set; }
-        public string Model { get ; set;}
+        [Key]
+        public string ModelID { get; set; }
+        public string ModelName { get ; set;}
 
-        public Guid BodyID { get; set; }
+        public string BodyID { get; set; }
         public BodyEntity Body { get; set; }
 
-        public Guid BrandID { get; set; }
+        public string BrandID { get; set; }
         public BrandEntity Brand { get; set; }
 
 

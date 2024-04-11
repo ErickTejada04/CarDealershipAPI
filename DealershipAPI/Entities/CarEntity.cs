@@ -1,10 +1,13 @@
-﻿namespace DealershipAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DealershipAPI.Entities
 {
     public class CarEntity
     {
-        public Guid CarID { get; set; }
-        public Guid ModelID { get; set; }
-        public ModelEntity Model { get; set; }
+        [Key]
+        public string CarID { get; set; }
+        public string ModelID { get; set; }
+        //public Model Model { get; set; }
 
         public int Year { get; set; }
         public string Color { get; set; }

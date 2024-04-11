@@ -1,8 +1,11 @@
-﻿namespace DealershipAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DealershipAPI.Entities
 {
     public class BrandEntity
     {
-        public Guid BrandID { get; set; }
+        [Key]
+        public string BrandID { get; set; }
         public string Brand { get; set; }
     }
 }

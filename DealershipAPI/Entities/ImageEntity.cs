@@ -1,9 +1,12 @@
-﻿namespace DealershipAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DealershipAPI.Entities
 {
-    public class ImageEntity
+    public class Image
     {
-        public Guid ImageID { get; set; }
-        public Guid CarID { get; set; }
+        [Key]
+        public string ImageID { get; set; }
+        public string CarID { get; set; }
         public CarEntity Car { get; set; }
         public string ImageURL { get; set; }
         public int Main { get; set; }

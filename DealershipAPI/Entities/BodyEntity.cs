@@ -1,8 +1,11 @@
-﻿namespace DealershipAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DealershipAPI.Entities
 {
     public class BodyEntity
     {
-        public Guid BodyID { get; set; }
+        [Key]
+        public string BodyID { get; set; }
         public string Body { get; set; }
 
     }
