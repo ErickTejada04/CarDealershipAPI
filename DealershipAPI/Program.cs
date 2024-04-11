@@ -1,4 +1,8 @@
+
+using DealershipAPI.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.ConfigureCors();
 
 // Add services to the container.
 
@@ -17,7 +21,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
