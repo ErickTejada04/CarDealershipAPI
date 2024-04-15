@@ -1,3 +1,4 @@
+using DealershipAPI.DTOs;
 using DealershipAPI.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,38 +32,52 @@ namespace DealershipAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ModelEntity model)
+        public async Task<IActionResult> Post([FromBody] ModelDTO model)
         {
+            var Brand = _context.Brand.FirstOrDefault(x => x.Brand == model.Brand);
+            var Body = _context.Body.FirstOrDefault(x => x.Body == model.Body);
+
+
             var newModel = new ModelEntity
             {
-                ModelID = model.ModelID,
+                ModelID = Guid.NewGuid().ToString(),
                 Model = model.Model,
-                BodyID = model.BodyID,
-                Body = model.Body,
-                BrandID = model.BrandID,
-                Brand   = model.Brand,
+                Body = Body,
+                Brand = Brand,
             };
-            _context.Model.Add(model);
+            _context.Model.Add(newModel);
             await _context.SaveChangesAsync();
-            return Ok(model);
+            return Ok(newModel);
         }
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] ModelEntity model)
+        public async Task<IActionResult> Put(string id, [FromBody] ModelDTO model)
         {
-            if (id != model.ModelID)
+            if (!ModelExists(id))
             {
                 return NotFound();
             }
 
-            _context.Entry(model).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            try
+            {
+                var Brand = _context.Brand.FirstOrDefault(x => x.Brand == model.Brand);
+                var Body = _context.Body.FirstOrDefault(x => x.Body == model.Body);
+                var modelEntity = await _context.Model.FirstOrDefaultAsync(x => x.ModelID == id);
 
+                modelEntity.Model = model.Model;
+                modelEntity.Brand = Brand;
+                modelEntity.Body = Body;
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return BadRequest();
+            }
             return Ok(model);
         }
 
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var model = await _context.Model.FindAsync(id);
@@ -75,7 +90,7 @@ namespace DealershipAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
-        }
+        }*/
 
         private bool ModelExists(string id)
         {
