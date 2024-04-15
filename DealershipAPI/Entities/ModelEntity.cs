@@ -6,7 +6,7 @@ namespace DealershipAPI.Entities
     {
         [Key]
         public string ModelID { get; set; }
-        public string ModelName { get ; set;}
+        public string Model { get ; set;}
 
         public string BodyID { get; set; }
         public BodyEntity Body { get; set; }

@@ -1,17 +1,85 @@
-using System.Runtime.InteropServices;
+using DealershipAPI.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-// In SDK-style projects such as this one, several assembly attributes that were historically
-// defined in this file are now automatically added during build and populated with
-// values defined in project properties. For details of which attributes are included
-// and how to customise this process see: https://aka.ms/assembly-info-properties
+namespace DealershipAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ModelsController : ControllerBase
+    {
+        private readonly ApplicationContext _context;
+
+        public ModelsController(ApplicationContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            return Ok(_context.Model
+                .Select(Model => new
+                {
+                    ModelID = Model.ModelID,
+                    ModelName = Model.Model,
+                    BrandName = Model.Brand.Brand,
+                    Body = Model.Body.Body,
+                })
+                .ToList()); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] ModelEntity model)
+        {
+            var newModel = new ModelEntity
+            {
+                ModelID = model.ModelID,
+                Model = model.Model,
+                BodyID = model.BodyID,
+                Body = model.Body,
+                BrandID = model.BrandID,
+                Brand   = model.Brand,
+            };
+            _context.Model.Add(model);
+            await _context.SaveChangesAsync();
+            return Ok(model);
+        }
 
 
-// Setting ComVisible to false makes the types in this assembly not visible to COM
-// components.  If you need to access a type in this assembly from COM, set the ComVisible
-// attribute to true on that type.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(string id, [FromBody] ModelEntity model)
+        {
+            if (id != model.ModelID)
+            {
+                return NotFound();
+            }
 
-[assembly: ComVisible(false)]
+            _context.Entry(model).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM.
+            return Ok(model);
+        }
 
-[assembly: Guid("59bc306e-24f8-4118-b47c-35e541934d71")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var model = await _context.Model.FindAsync(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            _context.Model.Remove(model);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        private bool ModelExists(string id)
+        {
+            return _context.Model.Any(e => e.ModelID == id);
+        }
+    }
+}
