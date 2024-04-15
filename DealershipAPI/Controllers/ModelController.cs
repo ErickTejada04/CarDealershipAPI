@@ -77,7 +77,7 @@ namespace DealershipAPI.Controllers
             return Ok(model);
         }
 
-        [HttpDelete("{id}")]
+        /*[HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var model = await _context.Model.FindAsync(id);
@@ -90,7 +90,7 @@ namespace DealershipAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
-        }
+        }*/
 
         private bool ModelExists(string id)
         {
