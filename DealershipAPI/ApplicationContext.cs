@@ -10,10 +10,10 @@ namespace DealershipAPI
 
         }
 
-        //public DbSet<Entities.Body> Bodies { get; set; }
+        public DbSet<Entities.BodyEntity> Body { get; set; }
         public DbSet<Entities.BrandEntity> Brand { get; set; }
-       // public DbSet<Entities.Model> Models { get; set; }
-       // public DbSet<Entities.Car> Cars { get; set; }
+        public DbSet<Entities.ModelEntity> Model { get; set; }
+        public DbSet<Entities.CarEntity> Car { get; set; }
         //public DbSet<Entities.Image> Images { get; set; }
 
 
