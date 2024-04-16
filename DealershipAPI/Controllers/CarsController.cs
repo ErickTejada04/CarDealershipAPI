@@ -19,13 +19,54 @@ namespace DealershipAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] CarParameters carParameters)
         {
-            return Ok(_context.Car
-                .Include(model => model.Model)
-                .Include(brand => brand.Model.Brand)
-                .Include(body => body.Model.Body)
-                .ToList());
+
+            var carQuery = await _context.Car
+                .Select(car => new CarResponse{
+                    CarID = car.CarID,
+                    ModelName = car.Model.Model,
+                    BrandName = car.Model.Brand.Brand,
+                    BodyName = car.Model.Body.Body,
+                    Year = car.Year,
+                    Color = car.Color,
+                    Price = car.Price,
+                    Condition = car.Condition,
+                    Mileage = car.Mileage,
+                    Traction = car.Traction,
+                    Transmission = car.Transmission,
+                    Description = car.Description,
+                    Doors = car.Doors
+                }).ToListAsync();
+
+            if (carQuery.Count == 0)
+            {
+                return NotFound();
+            }
+
+            if (carParameters.Brand != null) carQuery = carQuery.Where(x => x.BrandName == carParameters.Brand).ToList();
+            if (carParameters.Model != null) carQuery = carQuery.Where(x => x.ModelName == carParameters.Model).ToList();
+            if (carParameters.Body != null) carQuery = carQuery.Where(x => x.BodyName == carParameters.Body).ToList();
+            if (carParameters.Condition != null) carQuery = carQuery.Where(x => x.Condition == carParameters.Condition).ToList();
+            if (carParameters.Year != null) carQuery = carQuery.Where(x => x.Year <= carParameters.Year).ToList();
+            if (carParameters.Price != null) carQuery = carQuery.Where(x => x.Price <= carParameters.Price).ToList();
+            if (carParameters.Mileage != null) carQuery = carQuery.Where(x => x.Mileage <= carParameters.Mileage).ToList();
+            if (carParameters.Transmission != null) carQuery = carQuery.Where(x => x.Traction == carParameters.Transmission).ToList();
+            if (carParameters.SortBy == "Price") carQuery = carQuery.OrderBy(x => x.Price).ToList();
+            if (carParameters.Keyword != null) carQuery = carQuery.Where(x => x.BrandName.Contains(carParameters.Keyword) 
+            || x.ModelName.Contains(carParameters.Keyword)
+            || x.BodyName.Contains(carParameters.Keyword)
+            || x.Color.Contains(carParameters.Keyword)
+            ).ToList();
+
+
+            var cars = carQuery
+                .Skip((carParameters.PageNumber - 1) * carParameters.PageSize)
+                .Take(carParameters.PageSize)
+                .ToList();
+
+
+            return Ok(cars);
         }
 
 
@@ -62,12 +103,23 @@ namespace DealershipAPI.Controllers
             {
                 return NotFound();
             }
-            //Develop, ahora en controlador
             var car = await _context.Car
-                .Include(model => model.Model)
-                .Include(brand => brand.Model.Brand)
-                .Include(body => body.Model.Body)
-                .FirstOrDefaultAsync(x => x.CarID == id);
+                .Select(car => new CarResponse
+                {
+                    CarID = car.CarID,
+                    ModelName = car.Model.Model,
+                    BrandName = car.Model.Brand.Brand,
+                    BodyName = car.Model.Body.Body,
+                    Year = car.Year,
+                    Color = car.Color,
+                    Price = car.Price,
+                    Condition = car.Condition,
+                    Mileage = car.Mileage,
+                    Traction = car.Traction,
+                    Transmission = car.Transmission,
+                    Description = car.Description,
+                    Doors = car.Doors
+                }).FirstOrDefaultAsync(x => x.CarID == id);
             return Ok(car);
         }
 
@@ -81,9 +133,7 @@ namespace DealershipAPI.Controllers
 
             try
             {
-
                 var model = _context.Model.FirstOrDefault(x => x.Model == car.ModelName);
-
                 var carEntity = await _context.Car.FirstOrDefaultAsync(x => x.CarID == id);
                 carEntity.Model = model;
                 carEntity.ModelID = model.ModelID;
@@ -107,6 +157,7 @@ namespace DealershipAPI.Controllers
             return Ok(car);
         }
 
+        /*
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -120,7 +171,7 @@ namespace DealershipAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
-        
+        */
 
         private bool CarExists(string id)
         {

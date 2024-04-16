@@ -14,5 +14,9 @@ namespace DealershipAPI
         public DbSet<Entities.BrandEntity> Brand { get; set; }
         public DbSet<Entities.ModelEntity> Model { get; set; }
         public DbSet<Entities.CarEntity> Car { get; set; }
+
+        public DbSet<Entities.UserEntity> User { get; set; }
+
+
     }
 }
