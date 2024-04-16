@@ -101,7 +101,51 @@ namespace DealershipAPI.Controllers
             return Ok(images);
         }
 
+        [HttpPost("{id}")]
+        public async Task<IActionResult> ChangeImage(string id, [FromForm] IFormFile image)
+        {
+            var dbimage = await _context.Image.FindAsync(id);
 
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                if (image.Length == 0)
+                {
+                    return BadRequest("Empty file");
+                }
+
+                string fileName = image.FileName;
+                string url = "";
+                BlobClient blob = _containerClient.GetBlobClient(image.FileName);
+
+                var blobHttpHeader = new BlobHttpHeaders
+                {
+                    ContentType = "image/png"
+                };
+
+                using (Stream stream = image.OpenReadStream())
+                {
+                    blob.Upload(stream, blobHttpHeader);
+                }
+
+                url = blob.Uri.AbsoluteUri;
+
+                dbimage.ImageURL = url;
+
+                await _context.SaveChangesAsync();
+
+                   return Ok();
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
         private bool URLExists(string url)
         {
             return _context.Image.Any(e => e.ImageURL == url);

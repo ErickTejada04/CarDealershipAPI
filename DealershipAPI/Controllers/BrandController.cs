@@ -50,6 +50,7 @@ namespace DealershipAPI.Controller
             {
                 BrandID = Guid.NewGuid().ToString(),
                 Brand = brandName,
+                Status = 1
             };
 
             _context.Brand.Add(newBrand);

@@ -44,6 +44,7 @@ namespace DealershipAPI.Controllers
                         .Where(x => x.CarID == car.CarID)
                         .Select(x => new ImageResponse
                         {
+                            ImageID = x.ImageID,
                             ImageURL = x.ImageURL,
                             Main = Convert.ToInt32(x.Main)
                         }).ToList()
@@ -86,27 +87,37 @@ namespace DealershipAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CarDTO car)
         {
-            var model = _context.Model.FirstOrDefault(x => x.Model == car.ModelName);
 
-            var newCar = new CarEntity
+            try
             {
-                CarID = Guid.NewGuid().ToString(),
-                Model = model,
-                ModelID = model.ModelID,
-                Year = car.Year,
-                Color = car.Color,
-                Price = car.Price,
-                Condition = car.Condition,
-                Mileage = car.Mileage,
-                Traction = car.Traction,
-                Transmission = car.Transmission,
-                Description = car.Description,
-                CreationDate = DateTime.Now,
-                Doors = car.Doors,
-            };
-            _context.Car.Add(newCar);
-            await _context.SaveChangesAsync();
-            return Ok(car);
+                var model = _context.Model.FirstOrDefault(x => x.Model == car.ModelName);
+
+                var newCar = new CarEntity
+                {
+                    CarID = Guid.NewGuid().ToString(),
+                    Model = model,
+                    ModelID = model.ModelID,
+                    Year = car.Year,
+                    Color = car.Color,
+                    Price = car.Price,
+                    Condition = car.Condition,
+                    Mileage = car.Mileage,
+                    Traction = car.Traction,
+                    Transmission = car.Transmission,
+                    Description = car.Description,
+                    CreationDate = DateTime.Now,
+                    Status = "Disponible",
+                    Doors = car.Doors,
+                };
+                _context.Car.Add(newCar);
+                await _context.SaveChangesAsync();
+                return Ok(car);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
         }
         
         [HttpGet("{id}")]
