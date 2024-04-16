@@ -1,5 +1,6 @@
 ﻿using DealershipAPI.DTOs;
 using DealershipAPI.Entities;
+using DealershipAPI.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-﻿namespace DealershipAPI
+﻿namespace DealershipAPI.Utilities
 {
     public class CarParameters
     {

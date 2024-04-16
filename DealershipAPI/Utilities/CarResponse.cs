@@ -1,4 +1,4 @@
-﻿namespace DealershipAPI.DTOs
+﻿namespace DealershipAPI.Utilities
 {
     public class CarResponse
     {
