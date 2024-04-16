@@ -37,7 +37,15 @@ namespace DealershipAPI.Controllers
                     Traction = car.Traction,
                     Transmission = car.Transmission,
                     Description = car.Description,
-                    Doors = car.Doors
+                    Doors = car.Doors,
+                    Images = _context.Image
+                        .Where(x => x.CarID == car.CarID)
+                        .Select(x => new ImageResponse
+                        {
+                            ImageURL = x.ImageURL,
+                            Main = Convert.ToInt32(x.Main)
+                        }).ToList()
+
                 }).ToListAsync();
 
             if (carQuery.Count == 0)

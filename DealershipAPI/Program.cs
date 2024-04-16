@@ -1,6 +1,7 @@
 
 using DealershipAPI;
 using DealershipAPI.Extensions;
+using DealershipAPI.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 
-var connectionString = builder.Configuration.GetConnectionString("sqlServerConnection");
-builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Secrets.dbConnectionString));
 
 builder.Services.AddSwaggerGen();
 

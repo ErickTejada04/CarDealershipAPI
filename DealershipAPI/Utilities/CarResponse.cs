@@ -15,5 +15,6 @@
         public string Traction { get; set; }
         public string Description { get; set; }
         public int Doors { get; set; }
+        public List<ImageResponse> Images { get; set; }
     }
 }

@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DealershipAPI.Entities
+﻿namespace DealershipAPI.DTOs
 {
-    public class ImageEntity
+    public class ImageDTO
     {
-        [Key]
         public string ImageID { get; set; }
         public string CarID { get; set; }
         public string ImageURL { get; set; }
