@@ -8,5 +8,6 @@ namespace DealershipAPI.Entities
         [Key]
         public string BrandID { get; set; }
         public string Brand { get; set; }
+        public int Status { get; set; }
     }
 }

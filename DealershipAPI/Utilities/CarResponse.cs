@@ -15,6 +15,8 @@
         public string Traction { get; set; }
         public string Description { get; set; }
         public int Doors { get; set; }
+        public DateTime CreationDate { get; set; }
         public List<ImageResponse> Images { get; set; }
+        public string Status { get; set; }
     }
 }

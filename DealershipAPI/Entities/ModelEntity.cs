@@ -10,5 +10,6 @@ namespace DealershipAPI.Entities
         public string Model { get ; set;}
         public BodyEntity Body { get; set; }
         public BrandEntity Brand { get; set; }
+        public int Status { get; set; }
     }
 }

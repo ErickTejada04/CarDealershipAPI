@@ -19,15 +19,21 @@ namespace DealershipAPI.Controller
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int? status)
         {
-            return Ok(_context.Brand
-                .Select(Brand => new
-                {
-                    BrandID = Brand.BrandID,
-                    BrandName = Brand.Brand,
-                })
-                .ToList());
+            var brands = _context.Brand.Select(Brand => new
+            {
+                BrandID = Brand.BrandID,
+                BrandName = Brand.Brand,
+                Status = Brand.Status
+            }).ToList();
+
+            if (status != null)
+            {
+                brands = brands.Where(x => x.Status == status).ToList();
+            }
+
+            return Ok(brands);
         }
 
         [HttpPost]
@@ -68,8 +74,8 @@ namespace DealershipAPI.Controller
             return Ok(Brand);
         }
 
-        /*[HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> SetActive(string id, int status)
         {
             var brand = await _context.Brand.FindAsync(id);
             if (brand == null)
@@ -77,11 +83,11 @@ namespace DealershipAPI.Controller
                 return NotFound();
             }
 
-            _context.Brand.Remove(brand);
+            brand.Status = status;
             await _context.SaveChangesAsync();
 
             return Ok();
-        }*/
+        }
 
         private bool BrandExists(string brandName)
         {

@@ -19,7 +19,7 @@ namespace DealershipAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _context.Contact.ToListAsync());
+            return Ok(await _context.Contact.OrderBy(x => x.SentDate).ToListAsync());
         }
 
         [HttpGet("{id}")]
@@ -45,7 +45,8 @@ namespace DealershipAPI.Controllers
                 Email = contact.Email,
                 Phone = contact.Phone,
                 Message = contact.Message,
-                Status = "Pendiente"
+                Status = "Pendiente",
+                SentDate = DateTime.Now
             };
 
             _context.Contact.Add(newContact);

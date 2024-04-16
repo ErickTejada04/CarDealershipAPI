@@ -8,6 +8,7 @@ namespace DealershipAPI.Entities
         [Key]
         public string BodyID { get; set; }
         public string Body { get; set; }
+        public int Status { get; set; }
 
     }
 }

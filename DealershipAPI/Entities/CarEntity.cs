@@ -21,5 +21,7 @@ namespace DealershipAPI.Entities
 
         public DateTime CreationDate { get; set; }
         public int Doors { get; set; }
+
+        public string Status { get; set; } 
     }
 }

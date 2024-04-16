@@ -38,6 +38,8 @@ namespace DealershipAPI.Controllers
                     Transmission = car.Transmission,
                     Description = car.Description,
                     Doors = car.Doors,
+                    CreationDate = car.CreationDate,
+                    Status = car.Status,
                     Images = _context.Image
                         .Where(x => x.CarID == car.CarID)
                         .Select(x => new ImageResponse
@@ -62,6 +64,8 @@ namespace DealershipAPI.Controllers
             if (carParameters.Mileage != null) carQuery = carQuery.Where(x => x.Mileage <= carParameters.Mileage).ToList();
             if (carParameters.Transmission != null) carQuery = carQuery.Where(x => x.Traction == carParameters.Transmission).ToList();
             if (carParameters.SortBy == "Price") carQuery = carQuery.OrderBy(x => x.Price).ToList();
+            if (carParameters.SortBy == "MostRecent") carQuery = carQuery.OrderBy(x => x.CreationDate).ToList();
+            if (carParameters.Status == "Disponible") carQuery = carQuery.Where(x => x.Status == carParameters.Status).ToList();
             if (carParameters.Keyword != null) carQuery = carQuery.Where(x => x.BrandName.Contains(carParameters.Keyword) 
             || x.ModelName.Contains(carParameters.Keyword)
             || x.BodyName.Contains(carParameters.Keyword)
@@ -127,6 +131,8 @@ namespace DealershipAPI.Controllers
                     Traction = car.Traction,
                     Transmission = car.Transmission,
                     Description = car.Description,
+                    CreationDate = car.CreationDate,
+                    Status = car.Status,
                     Doors = car.Doors
                 }).FirstOrDefaultAsync(x => x.CarID == id);
             return Ok(car);
@@ -166,9 +172,9 @@ namespace DealershipAPI.Controllers
             return Ok(car);
         }
 
-        /*
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        
+        [HttpPost("{id}")]
+        public async Task<IActionResult> SetActive(string id, string status)
         {
             if (!CarExists(id))
             {
@@ -176,11 +182,11 @@ namespace DealershipAPI.Controllers
             }
 
             var car = await _context.Car.FirstOrDefaultAsync(x => x.CarID == id);
-            _context.Car.Remove(car);
+            car.Status = status;
             await _context.SaveChangesAsync();
             return Ok();
         }
-        */
+        
 
         private bool CarExists(string id)
         {

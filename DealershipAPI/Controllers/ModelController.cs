@@ -18,17 +18,22 @@ namespace DealershipAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int? status)
         {
-            return Ok(_context.Model
+            var models = _context.Model
                 .Select(Model => new
                 {
                     ModelID = Model.ModelID,
                     ModelName = Model.Model,
                     BrandName = Model.Brand.Brand,
                     Body = Model.Body.Body,
+                    Status = Model.Status
                 })
-                .ToList()); 
+                .ToList();
+
+                if (status != null) models = models.Where(x => x.Status == status).ToList();
+
+            return Ok(models); 
         }
 
         [HttpPost]
@@ -44,6 +49,7 @@ namespace DealershipAPI.Controllers
                 Model = model.Model,
                 Body = Body,
                 Brand = Brand,
+                Status = 1
             };
             _context.Model.Add(newModel);
             await _context.SaveChangesAsync();
@@ -77,8 +83,8 @@ namespace DealershipAPI.Controllers
             return Ok(model);
         }
 
-        /*[HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> SetActive(string id, int status)
         {
             var model = await _context.Model.FindAsync(id);
             if (model == null)
@@ -86,11 +92,11 @@ namespace DealershipAPI.Controllers
                 return NotFound();
             }
 
-            _context.Model.Remove(model);
+            model.Status = status;
             await _context.SaveChangesAsync();
 
-            return Ok();
-        }*/
+            return Ok(model);
+        }
 
         private bool ModelExists(string id)
         {

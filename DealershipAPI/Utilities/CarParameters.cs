@@ -11,7 +11,8 @@
         public int? Mileage { get; set; }
         public string? Transmission { get; set; }
         public string? Keyword { get; set; }
-        public string? SortBy { get; set; } = "Price";
+        public string? SortBy { get; set; } = "MostRecent";
+        public string? Status { get; set; }
 
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
