@@ -4,6 +4,7 @@ using DealershipAPI.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace DealershipAPI.Controllers
 {
@@ -56,22 +57,28 @@ namespace DealershipAPI.Controllers
                 return NotFound();
             }
 
-            if (carParameters.Brand != null) carQuery = carQuery.Where(x => x.BrandName == carParameters.Brand).ToList();
-            if (carParameters.Model != null) carQuery = carQuery.Where(x => x.ModelName == carParameters.Model).ToList();
-            if (carParameters.Body != null) carQuery = carQuery.Where(x => x.BodyName == carParameters.Body).ToList();
-            if (carParameters.Condition != null) carQuery = carQuery.Where(x => x.Condition == carParameters.Condition).ToList();
-            if (carParameters.Year != null) carQuery = carQuery.Where(x => x.Year <= carParameters.Year).ToList();
-            if (carParameters.Price != null) carQuery = carQuery.Where(x => x.Price <= carParameters.Price).ToList();
-            if (carParameters.Mileage != null) carQuery = carQuery.Where(x => x.Mileage <= carParameters.Mileage).ToList();
-            if (carParameters.Transmission != null) carQuery = carQuery.Where(x => x.Traction == carParameters.Transmission).ToList();
-            if (carParameters.SortBy == "Price") carQuery = carQuery.OrderBy(x => x.Price).ToList();
-            if (carParameters.SortBy == "MostRecent") carQuery = carQuery.OrderBy(x => x.CreationDate).ToList();
-            if (carParameters.Status == "Disponible") carQuery = carQuery.Where(x => x.Status == carParameters.Status).ToList();
-            if (carParameters.Keyword != null) carQuery = carQuery.Where(x => x.BrandName.Contains(carParameters.Keyword) 
-            || x.ModelName.Contains(carParameters.Keyword)
-            || x.BodyName.Contains(carParameters.Keyword)
-            || x.Color.Contains(carParameters.Keyword)
-            ).ToList();
+            try {
+                if (carParameters.Brand != null) carQuery = carQuery.Where(x => x.BrandName == carParameters.Brand).ToList();
+                if (carParameters.Model != null) carQuery = carQuery.Where(x => x.ModelName == carParameters.Model).ToList();
+                if (carParameters.Body != null) carQuery = carQuery.Where(x => x.BodyName == carParameters.Body).ToList();
+                if (carParameters.Condition != null) carQuery = carQuery.Where(x => x.Condition == carParameters.Condition).ToList();
+                if (carParameters.Year != null) carQuery = carQuery.Where(x => x.Year <= carParameters.Year).ToList();
+                if (carParameters.Price != null) carQuery = carQuery.Where(x => x.Price <= carParameters.Price).ToList();
+                if (carParameters.Mileage != null) carQuery = carQuery.Where(x => x.Mileage <= carParameters.Mileage).ToList();
+                if (carParameters.Transmission != null) carQuery = carQuery.Where(x => x.Traction == carParameters.Transmission).ToList();
+                if (carParameters.SortBy == "Price") carQuery = carQuery.OrderBy(x => x.Price).ToList();
+                if (carParameters.SortBy == "MostRecent") carQuery = carQuery.OrderBy(x => x.CreationDate).ToList();
+                if (carParameters.Status == "Disponible") carQuery = carQuery.Where(x => x.Status == carParameters.Status).ToList();
+                if (carParameters.Keyword != null) carQuery = carQuery.Where(x => x.BrandName.Contains(carParameters.Keyword)
+                || x.ModelName.Contains(carParameters.Keyword)
+                || x.BodyName.Contains(carParameters.Keyword)
+                || x.Color.Contains(carParameters.Keyword)
+                ).ToList();
+            }catch
+            {
+                return BadRequest();
+            }
+           
 
 
             var cars = carQuery
@@ -87,6 +94,11 @@ namespace DealershipAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CarDTO car)
         {
+
+            if (!ValidateCar(car))
+            {
+                return BadRequest();
+            }
 
             try
             {
@@ -111,7 +123,7 @@ namespace DealershipAPI.Controllers
                 };
                 _context.Car.Add(newCar);
                 await _context.SaveChangesAsync();
-                return Ok(car);
+                return Ok(newCar);
             }
             catch
             {
@@ -156,7 +168,12 @@ namespace DealershipAPI.Controllers
             {
                 return NotFound();
             }
-
+/*
+            if (!ValidateCar(car))
+            {
+                return BadRequest();
+            }
+*/
             try
             {
                 var model = _context.Model.FirstOrDefault(x => x.Model == car.ModelName);
@@ -202,7 +219,17 @@ namespace DealershipAPI.Controllers
         private bool CarExists(string id)
         {
             return _context.Car.Any(e => e.CarID == id);
-        }   
+        }
+        
+        private bool ValidateCar(CarDTO car)
+        {
+            if (car.Year > DateTime.Now.Year + 1 || car.Price < 5000 || car.Mileage < 0 || car.Doors < 0 || car.Doors > 5)
+            {
+                return false;
+            }
+            return true;
+        }
+       
     }
 
 }
